@@ -4,7 +4,9 @@ class Home {
 			items: undefined,
 			item: new Map(),
 		};
-		this.itemQuery = { ImageTypes: "Backdrop", EnableImageTypes: "Logo,Backdrop", IncludeItemTypes: "Movie,Series", SortBy: "ProductionYear, PremiereDate, SortName", Recursive: true, ImageTypeLimit: 1, Limit: 10, Fields: "ProductionYear", SortOrder: "Descending", EnableUserData: false, EnableTotalRecordCount: false };
+		this.config = new Config();
+		this.itemQuery = this.config.itemQuery;
+		// this.itemQuery = { ImageTypes: "Backdrop", EnableImageTypes: "Logo,Backdrop", IncludeItemTypes: "Movie,Series", SortBy: "ProductionYear, PremiereDate, SortName", Recursive: true, ImageTypeLimit: 1, Limit: 10, Fields: "ProductionYear", SortOrder: "Descending", EnableUserData: false, EnableTotalRecordCount: false };
 		this.coverOptions = { type: "Backdrop", maxWidth: 3000 };
 		this.logoOptions = { type: "Logo", maxWidth: 3000 };
 		this.initStart = false;
@@ -127,7 +129,22 @@ class Home {
 		// $(".view:not(.hide) .section0").detach().appendTo(".view:not(.hide) .misty-banner-library");
 
 		// 插入数据
-		const data = await this.getItems(this.itemQuery);
+		// const data = await this.getItems(this.itemQuery);
+		// 插入数据
+		let data = {Items:[]}
+		//配置的媒体库不为空
+		if(this.config.parentIds[0] != ""){
+			//合并所有配置的媒体库的结果
+			for(let parentId of this.config.parentIds){
+				this.itemQuery.ParentId = parentId;
+				let res = await this.getItems(this.itemQuery);
+				data.Items = data.Items.concat(res.Items);
+			}
+		} else {
+			//查询所有媒体库
+			data = await this.getItems(this.itemQuery);
+		}
+		
 		console.log(data);
 		data.Items.forEach(async (item) => {
 			const detail = await this.getItem(item.Id),
