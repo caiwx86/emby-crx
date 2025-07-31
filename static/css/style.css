@@ -35,6 +35,7 @@
 	position: absolute;
 	top: 0;
 	display: flex; /* 如果不需要媒体库标题显示, 请将flex改为none */
+	justify-content: center;
 	width: 100%;
 	height: 100%;
 	padding: 0;
