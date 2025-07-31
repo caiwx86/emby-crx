@@ -99,6 +99,16 @@ class Home {
 		}
 		return this.cache.items;
 	}
+    
+	static itemsRandom(array){
+		let res = [], random;
+		while(array.length>0){
+			random = Math.floor(Math.random()*array.length);
+			res.push(array[random]);
+			array.splice(random, 1);
+		}
+		return res;
+	}
 
 	static async getItem(itemId) {
 		// 双缓存 优先使用 WebStorage
@@ -144,7 +154,8 @@ class Home {
 			//查询所有媒体库
 			data = await this.getItems(this.itemQuery);
 		}
-		
+		// 随机打乱
+	    data.Items = this.itemsRandom(data.Items);
 		console.log(data);
 		data.Items.forEach(async (item) => {
 			const detail = await this.getItem(item.Id),
